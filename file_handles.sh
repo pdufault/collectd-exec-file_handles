@@ -14,13 +14,10 @@ while sleep "$INTERVAL"; do
   # * the maximum number of file handles.
   # Linux 2.6 always reports 0 as the number of free file handles -- this is not an error, it just means that the number of allocated file handles exactly matches the number of used file handles.
 
-  # Collect data into a temp variable
-  array=$(< /proc/sys/fs/file-nr)
-
   # Grab the metrics
-  allocated=$(awk '{print $1}' <<< $array)
-  allunused=$(awk '{print $2}' <<< $array)
-  max=$(awk '{print $3}' <<< $array)
+  allocated=$(cut -f1 /proc/sys/fs/file-nr)
+  allunused=$(cut -f2 /proc/sys/fs/file-nr)
+  max=$(cut -f3 /proc/sys/fs/file-nr)
 
   # Output time
   echo "PUTVAL $HOSTNAME/system-file_handles/gauge-file_handles_used interval=$INTERVAL N:$allocated"
